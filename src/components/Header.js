@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Menu, MenuItem, MenuMenu, Dropdown, Message } from 'semantic-ui-react'; 
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css'; 
 import { loadAccount } from '../store/interactions';
 
 const Header = () => {
-  const [activeItem, setActiveItem] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
   const options = [
     { key: 1, text: 'Localhost', value: "0x7a69" },
     { key: 2, text: 'Sepolia', value: "0xaa36a7" },
@@ -16,8 +17,10 @@ const Header = () => {
   const provider = useSelector((state) => state.provider.connection);
   const account = useSelector((state) => state.provider.account);
 
-  const handleItemClick = (e, { name }) => setActiveItem(name);
-
+  const handleHomeClick = (e, { name }) => {
+    navigate('/');
+  };
+  
   const networkHandler = async (e, { value }) => {
     try{
         await window.ethereum.request({
@@ -55,8 +58,7 @@ const Header = () => {
         <Menu stackable style={{ marginTop: '10px' }}>
             <MenuItem
               name='home'
-              active={activeItem === 'home'}
-              onClick={handleItemClick}
+              onClick={handleHomeClick}
             >
               Home
             </MenuItem>
@@ -72,7 +74,6 @@ const Header = () => {
             <MenuMenu position='right'>
               <MenuItem
                 name='connect'
-                active={activeItem === 'connect'}
                 onClick={connectHandler}
               >
                 {handleAccount()}
@@ -80,8 +81,7 @@ const Header = () => {
             </MenuMenu>
         </Menu>
         {error && <Message negative content={error} />}
-    </div>
-    
+    </div> 
   );
 }
 

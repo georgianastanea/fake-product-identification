@@ -14,6 +14,8 @@ contract ProductTracker {
         string source;
         string destination;
         string remarks;
+        address manufacturer;
+        address supplier;
     }
 
     event ProductTracker__AddProduct(
@@ -23,7 +25,9 @@ contract ProductTracker {
         string name,
         string source,
         string destination,
-        string remarks
+        string remarks,
+        address manufacturer,
+        address supplier
     );
 
     event ProductTracker__UpdateProduct(
@@ -33,7 +37,9 @@ contract ProductTracker {
         string name,
         string source,
         string destination,
-        string remarks
+        string remarks,
+        address manufacturer,
+        address supplier
     );
 
     function addProduct(
@@ -51,7 +57,9 @@ contract ProductTracker {
              _name,
              _source,
             _destination,
-            _remarks
+            _remarks,
+            msg.sender,
+            address(0)
         );
 
         emit ProductTracker__AddProduct (
@@ -61,7 +69,10 @@ contract ProductTracker {
             _name, 
             _source, 
             _destination, 
-            _remarks);
+            _remarks,
+            msg.sender,
+            address(0)
+        );
     }
 
     function updateProduct(
@@ -88,7 +99,9 @@ contract ProductTracker {
             _name,
             _source,
             _destination,
-            _remarks
+            _remarks,
+            product.manufacturer,
+            msg.sender
         );
     }
     
@@ -99,7 +112,9 @@ contract ProductTracker {
         string memory, 
         string memory,
         string memory,
-        string memory
+        string memory,
+        address,
+        address
     ){
         Product storage product = products[_productId];
         return (
@@ -109,7 +124,9 @@ contract ProductTracker {
             product.name,
             product.source,
             product.destination,
-            product.remarks
+            product.remarks,
+            product.manufacturer,
+            product.supplier
         );
     }
 
@@ -139,5 +156,13 @@ contract ProductTracker {
 
     function getRemarks(uint _productId) public view returns (string memory) {
         return products[_productId].remarks;
+    }
+
+    function getManufacturer(uint _productId) public view returns (address) {
+        return products[_productId].manufacturer;
+    }
+
+    function getSupplier(uint _productId) public view returns (address) {
+        return products[_productId].supplier;
     }
 }
