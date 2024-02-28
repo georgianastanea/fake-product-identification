@@ -13,7 +13,6 @@ import "./alert.css";
 const Alert = () => {
   const [isVisible, setIsVisible] = useState(true);
 
-  const alertRef = useRef(null);
   const event = useSelector(myEventsSelector);
   const overlayRef = useRef(null);
   const isPending = useSelector(
@@ -31,7 +30,7 @@ const Alert = () => {
   };
 
   useEffect(() => {
-    if (isPending) {
+    if (isPending && overlayRef.current) {
       setIsVisible(true);
       overlayRef.current.className = "overlay";
     }
