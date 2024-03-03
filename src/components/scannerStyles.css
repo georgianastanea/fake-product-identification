@@ -1,0 +1,23 @@
+.qr-bounding-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 60%;
+    height: 60%;
+    z-index: 1;
+    box-sizing: border-box;
+    box-shadow: rgba(255, 0, 0, 0.5) 0px 0px 0px 5px inset;
+  }
+
+.exchange-icon{
+  position: absolute;
+  right: 10px;
+  bottom: 30px;
+  color: gray;
+  cursor: pointer;
+  zIndex: 2;
+}
+  

@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Segment, Form, FormField, Button } from "semantic-ui-react";
+import { Grid, Form, FormField, Button } from "semantic-ui-react";
 import QRCode from 'qrcode.react';
 import { useState, useEffect, useRef } from "react";
 import { submitProduct } from "../store/interactions";

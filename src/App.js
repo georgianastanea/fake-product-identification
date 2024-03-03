@@ -56,7 +56,7 @@ function App() {
           <Route path="/customer" element={<CustomerPage />} />
         </Routes>
       </Layout>
-      <Alert />/
+      <Alert />
     </div>
   );
 }
