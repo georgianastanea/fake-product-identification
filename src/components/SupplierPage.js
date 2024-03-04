@@ -5,7 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import { submitProduct } from "../store/interactions";
 import { useSelector, useDispatch } from "react-redux";
 import { QrReader } from "react-qr-reader";
-import './scannerStyles.css';
+import Jimp from 'jimp';
+import jsQR from 'jsqr';
+import "./scannerStyles.css";
 
 const SupplierPage = () => {
   const [qrValue, setQrValue] = useState();
@@ -52,10 +54,19 @@ const SupplierPage = () => {
   };
 
   const handleGenerateQR = () => {
-    const qrValue = `Serial Number: ${serialNumber}, Product Name: ${productName}, Source Address: ${sourceAddress}, Destination Address: ${destinationAddress}, Remarks: ${remarks}`;
+    const qrObject = {
+      serialNumber: serialNumber,
+      productName: productName,
+      sourceAddress: sourceAddress,
+      destinationAddress: destinationAddress,
+      remarks: remarks
+    };
+  
+    const qrValue = JSON.stringify(qrObject);
     setQrValue(qrValue);
-    console.log(JSON.stringify(qrValue));
+    console.log(qrValue);
   };
+  
 
   const downloadCode = () => {
     const canvas = document.getElementById("qr-code");
@@ -74,18 +85,53 @@ const SupplierPage = () => {
 
   const handleScan = async (scanData) => {
     setLoadingScan(true);
-    console.log(`loaded data data`, scanData);
+    console.log(`loaded data`, scanData);
     if (scanData && scanData !== "") {
       console.log(`loaded >>>`, scanData);
       setData(scanData);
       setStartScan(false);
       setLoadingScan(false);
+    }
   };
-}
 
   const handleError = (err) => {
     console.error(err);
   };
+
+  const handleUploadQr = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const imgDataUrl = e.target.result;
+      const img = new Image();
+      img.onload = async () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, img.width, img.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code) {
+          const decodedData = JSON.parse(code.data);
+          setSerialNumber(decodedData.serialNumber || '');
+          setProductName(decodedData.productName || '');
+          setSourceAddress(decodedData.sourceAddress || '');
+          setDestinationAddress(decodedData.destinationAddress || '');
+          setRemarks(decodedData.remarks || '');
+          console.log(`QR code data`, decodedData);
+        } else {
+          console.log("No QR code found in the image.");
+        }
+      };
+      img.src = imgDataUrl;
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  
 
   return (
     <div>
@@ -151,18 +197,19 @@ const SupplierPage = () => {
                   Generate QR Code
                 </Button>
                 <div style={{ height: "7px" }} />
-                <Button
-                  color="blue"
-                  style={{
-                    margin: "auto",
-                    display: "block",
-                    paddingLeft: "27.8px",
-                    paddingRight: "27.8px",
-                  }}
-                  //   onClick={}
-                >
-                  Upload QR Code
-                </Button>
+                <div className="file-input-container">
+                  <label htmlFor="file-input" className="file-input-label">
+                    Upload QR Code
+                  </label>
+                  <input
+                    id="file-input"
+                    type="file"
+                    accept="image/*"
+                    className="file-input"
+                    onChange={handleUploadQr}
+                  />
+                </div>
+
                 <div style={{ height: "5px" }} />
                 <div style={{ textAlign: "center" }}>
                   <Radio
@@ -209,11 +256,9 @@ const SupplierPage = () => {
                           delay={1000}
                           onError={handleError}
                           onResult={handleScan}
-                          style={{ width: "100%", height: "auto"}}
+                          style={{ width: "100%", height: "auto" }}
                         />
-                        <div
-                          className="qr-bounding-box"
-                        ></div>
+                        <div className="qr-bounding-box"></div>
                       </div>
                     </div>
                     <Icon
@@ -221,7 +266,9 @@ const SupplierPage = () => {
                       size="big"
                       className="exchange-icon"
                       onClick={() =>
-                        setSelected(selected === "environment" ? "user" : "environment")
+                        setSelected(
+                          selected === "environment" ? "user" : "environment"
+                        )
                       }
                     />
                   </>

@@ -20,4 +20,37 @@
   cursor: pointer;
   zIndex: 2;
 }
+
+.file-input-container {
+  position: relative;
+  width: fit-content;
+  margin: auto;
+}
+
+.file-input-label {
+  display: inline-block;
+  background-color: #2185d0;
+  color: #fff;
+  padding-left: 27.8px;
+  padding-right: 27.8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-radius: .28571429rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+.file-input-label:hover {
+  background-color: #1678c2;
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
   
