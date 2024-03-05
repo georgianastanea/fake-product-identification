@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Form, FormField, Button, Radio, Icon } from "semantic-ui-react";
 import QRCode from "qrcode.react";
 import { useState, useEffect, useRef } from "react";
-import { submitProduct } from "../store/interactions";
+import { updateProduct } from "../store/interactions";
 import { useSelector, useDispatch } from "react-redux";
 import { QrReader } from "react-qr-reader";
 import Jimp from 'jimp';
@@ -37,9 +37,9 @@ const SupplierPage = () => {
     setRemarks("");
   }, [refreshKey]);
 
-  const handleAddProduct = (e) => {
+  const handleUpdateProduct = (e) => {
     e.preventDefault();
-    submitProduct(
+    updateProduct(
       serialNumber,
       productName,
       sourceAddress,
@@ -64,7 +64,6 @@ const SupplierPage = () => {
   
     const qrValue = JSON.stringify(qrObject);
     setQrValue(qrValue);
-    console.log(qrValue);
   };
   
 
@@ -121,7 +120,6 @@ const SupplierPage = () => {
           setSourceAddress(decodedData.sourceAddress || '');
           setDestinationAddress(decodedData.destinationAddress || '');
           setRemarks(decodedData.remarks || '');
-          console.log(`QR code data`, decodedData);
         } else {
           console.log("No QR code found in the image.");
         }
@@ -179,7 +177,7 @@ const SupplierPage = () => {
               <Button
                 color="blue"
                 type="submit"
-                onClick={handleAddProduct}
+                onClick={handleUpdateProduct}
                 style={{ margin: "auto", display: "block" }}
               >
                 Update Product

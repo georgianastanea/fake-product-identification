@@ -1,13 +1,13 @@
 {
     "31337": {
         "ProductTracker": {
-            "address":"0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+            "address":"0x5FbDB2315678afecb367f032d93F642f64180aa3"
         },
         "explorerURL": "#"
     },
     "11155111": {
         "ProductTracker": {
-            "address":"0xc8616F730d4F130A7A4138A9849AAfd915e36225"
+            "address":"0xC5777553D4954a44b21c4AFFcaE78EB14B2d8F11"
         },
         "explorerURL": "https://sepolia.etherscan.io/"
     }

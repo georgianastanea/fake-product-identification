@@ -75,22 +75,27 @@ contract ProductTracker {
         );
     }
 
+    event ProductTracker__DeleteProduct(
+        uint productId,
+        uint timestamp
+    );
+
     function updateProduct(
-        uint _productId,
         uint _serialNumber,
         string memory _name,
         string memory _source,
         string memory _destination,
         string memory _remarks
     ) public {
-        require(_productId <= productId, "Invalid productId");
+        uint _productId = findProductIdBySerialNumber(_serialNumber);
+        require(_productId != 0, "Product not found");
         
         Product storage product = products[_productId];
-        product.serialNumber = _serialNumber;
         product.name = _name;
         product.source = _source;
         product.destination = _destination;
         product.remarks = _remarks;
+        product.supplier = msg.sender;
 
         emit ProductTracker__UpdateProduct(
             _productId,
@@ -105,6 +110,12 @@ contract ProductTracker {
         );
     }
     
+    function deleteProduct(uint _productId) public {
+        require(_productId <= productId, "Invalid productId");
+        delete products[_productId];
+        emit ProductTracker__DeleteProduct(_productId, block.timestamp);
+    }
+
     function getProduct(uint _productId) public view returns(
         uint,
         uint, 
@@ -128,6 +139,15 @@ contract ProductTracker {
             product.manufacturer,
             product.supplier
         );
+    }
+
+    function findProductIdBySerialNumber(uint _serialNumber) private view returns (uint) {
+        for (uint i = 1; i <= productId; i++) {
+            if (products[i].serialNumber == _serialNumber) {
+                return i; 
+            }
+        }
+        return 0; 
     }
 
     function getProductId() public view returns (uint){

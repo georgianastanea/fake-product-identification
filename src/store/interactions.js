@@ -67,14 +67,64 @@ export const submitProduct = async (
     }
 };
 
+export const updateProduct = async (
+    serialNumber,
+    name,
+    sourceAddress,
+    destinationAddress,
+    remarks,
+    provider,
+    product_tracker,
+    dispatch
+) => {
+    let transaction;
+    dispatch ({ type: "UPDATE_PRODUCT_LOADED" });
+
+    try {
+        const signer = provider.getSigner();
+        transaction = await product_tracker.connect(signer).updateProduct(
+            Number(serialNumber),
+            name,
+            sourceAddress,
+            destinationAddress,
+            remarks
+        );
+        await transaction.wait();
+    } catch (error) {
+        console.log('Error updating product', error);
+        dispatch({ type: "UPDATE_PRODUCT_FAIL" });
+    }
+}
+
 export const loadAllProducts = async (provider, product_tracker, dispatch) => {
     const block = await provider.getBlockNumber();
-    const productsStream = await product_tracker.queryFilter(
+    const addedProductsStream = await product_tracker.queryFilter(
         "ProductTracker__AddProduct",
         0,
         block
     );
-    const products = productsStream.map((event) => event.args);
+    const addedProducts = addedProductsStream.map((event) => event.args);
+
+    const updatedProductsStream = await product_tracker.queryFilter(
+        "ProductTracker__UpdateProduct",
+        0,
+        block
+    );
+    const updatedProducts = updatedProductsStream.map((event) => event.args);
+
+    // array of products that were added but not updated
+    const products = addedProducts.filter((product) => {
+        const updatedProduct = updatedProducts.find(
+            (updatedProduct) =>
+                updatedProduct.serialNumber.toString() ===
+                product.serialNumber.toString()
+        );
+        return !updatedProduct;
+    });
+    // array of all products
+    updatedProducts.forEach((updatedProduct) => {
+        products.push(updatedProduct);
+    });
     dispatch({ type: "ALL_PRODUCTS", products });
 };
 
@@ -94,7 +144,26 @@ export const subscribeToEvent = async(product_tracker, dispatch) => {
             event
         ) => {
             const productOrder = event.args;
+            console.log(productOrder);
             dispatch({ type: "NEW_PRODUCT_SUCCESS", productOrder, event });
+        }
+    );
+    product_tracker.on(
+        "ProductTracker__UpdateProduct",
+        (
+            productId,
+            timestamp,
+            serialNumber,
+            name,
+            source,
+            destination,
+            remarks,
+            manufacturer,
+            supplier,
+            event
+        ) => {
+            const updateOrder = event.args;
+            dispatch({ type: "UPDATE_PRODUCT_SUCCESS", updateOrder, event });
         }
     );
 };

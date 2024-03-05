@@ -46,9 +46,16 @@ const ManufacturerPage = () => {
   };
 
   const handleGenerateQR = () => {
-    const qrValue = `Serial Number: ${serialNumber}, Product Name: ${productName}, Source Address: ${sourceAddress}, Destination Address: ${destinationAddress}, Remarks: ${remarks}`;
+    const qrObject = {
+      serialNumber: serialNumber,
+      productName: productName,
+      sourceAddress: sourceAddress,
+      destinationAddress: destinationAddress,
+      remarks: remarks
+    };
+  
+    const qrValue = JSON.stringify(qrObject);
     setQrValue(qrValue);
-    console.log(JSON.stringify(qrValue));
   };
 
   const downloadCode = () => {
