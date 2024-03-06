@@ -1,11 +1,10 @@
 import React from "react";
 import { Grid, Form, FormField, Button, Radio, Icon } from "semantic-ui-react";
 import QRCode from "qrcode.react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { updateProduct } from "../store/interactions";
 import { useSelector, useDispatch } from "react-redux";
 import { QrReader } from "react-qr-reader";
-import Jimp from 'jimp';
 import jsQR from 'jsqr';
 import "./scannerStyles.css";
 
@@ -128,8 +127,6 @@ const SupplierPage = () => {
     };
     reader.readAsDataURL(file);
   };
-  
-  
 
   return (
     <div>

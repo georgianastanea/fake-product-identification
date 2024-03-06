@@ -128,6 +128,34 @@ export const loadAllProducts = async (provider, product_tracker, dispatch) => {
     dispatch({ type: "ALL_PRODUCTS", products });
 };
 
+export const loadProductHistoryBySerialNumber = async (
+    serialNumber,
+    provider, 
+    product_tracker
+) => {
+    const block = await provider.getBlockNumber();
+    const addedProductsStream = await product_tracker.queryFilter(
+        "ProductTracker__AddProduct",
+        0,
+        block
+    );
+    const initialProduct = addedProductsStream.find(
+        (event) => event.args.serialNumber.toString() === serialNumber.toString()
+    );
+
+    const updatedProductsStream = await product_tracker.queryFilter(
+        "ProductTracker__UpdateProduct",
+        0,
+        block
+    );
+    const updatedProducts = updatedProductsStream.filter(
+        (event) => event.args.serialNumber.toString() === serialNumber.toString()
+    );
+
+    return { initialProduct, updatedProducts };
+};
+
+
 export const subscribeToEvent = async(product_tracker, dispatch) => {
     product_tracker.on(
         "ProductTracker__AddProduct",
