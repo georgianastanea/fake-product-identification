@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css'; 
 import { loadAccount } from '../store/interactions';
+import config from '../config.json';
 
 const Header = () => {
   const [error, setError] = useState(null);
@@ -11,11 +12,13 @@ const Header = () => {
   const options = [
     { key: 1, text: 'Localhost', value: "0x7a69" },
     { key: 2, text: 'Sepolia', value: "0xaa36a7" },
+    { key: 5, text: 'Goerli', value: "0x5" },
   ];
 
   const dispatch = useDispatch();
   const provider = useSelector((state) => state.provider.connection);
   const account = useSelector((state) => state.provider.account);
+  const chainId = useSelector((state) => state.provider.chainId);
 
   const handleHomeClick = (e, { name }) => {
     navigate('/');
@@ -23,6 +26,7 @@ const Header = () => {
   
   const networkHandler = async (e, { value }) => {
     try{
+        console.log('chainId:', chainId);
         await window.ethereum.request({
             method: "wallet_switchEthereumChain",
             params: [
@@ -69,6 +73,7 @@ const Header = () => {
               options={options}
               placeholder='Choose a network'
               onChange={networkHandler}
+              value={config[chainId] ? `0x${chainId.toString(16)}` : `0`}
             />
 
             <MenuMenu position='right'>

@@ -10,5 +10,11 @@
             "address":"0xC5777553D4954a44b21c4AFFcaE78EB14B2d8F11"
         },
         "explorerURL": "https://sepolia.etherscan.io/"
+    },
+    "5": {
+        "ProductTracker": {
+            "address":"0x5FbDB2315678afecb367f032d93F642f64180aa3"
+        },
+        "explorerURL": "https://goerli.etherscan.io/"
     }
 }

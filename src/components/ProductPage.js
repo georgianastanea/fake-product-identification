@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { loadProductHistoryBySerialNumber } from "../store/interactions";
 import { useSelector } from "react-redux";
-import FactoryIcon from '@mui/icons-material/Factory';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import './productPage.css';
+import FactoryIcon from "@mui/icons-material/Factory";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import { MessageHeader, Message, Dimmer, Loader } from "semantic-ui-react";
+import "./productPage.css";
 
 import {
   VerticalTimeline,
@@ -19,6 +20,7 @@ const ProductPage = () => {
     (state) => state.product_tracker.contract
   );
   const [productHistory, setProductHistory] = useState({});
+  const [productNotFound, setProductNotFound] = useState(false);
 
   useEffect(() => {
     const fetchProductHistory = async () => {
@@ -30,6 +32,7 @@ const ProductPage = () => {
           product_tracker
         );
         setProductHistory(history);
+        if (history.initialProduct === undefined) setProductNotFound(true);
         console.log("Product history:", history);
       } catch (error) {
         console.error("Error fetching product history:", error);
@@ -40,9 +43,9 @@ const ProductPage = () => {
   }, [serialNumber, provider, product_tracker]);
 
   const formatDate = (timestamp) => {
-    const date = new Date(timestamp * 1000); 
+    const date = new Date(timestamp * 1000);
     const day = date.getDate();
-    const month = date.getMonth() + 1; 
+    const month = date.getMonth() + 1;
     const year = date.getFullYear();
     const hour = date.getHours();
     const minute = date.getMinutes();
@@ -59,7 +62,7 @@ const ProductPage = () => {
 
   return (
     <div style={{ paddingTop: "40px" }}>
-      {productHistory.initialProduct && (
+      {productHistory.initialProduct ? (
         <VerticalTimeline lineColor="#e7e7e7">
           <VerticalTimelineElement
             className="vertical-timeline-element--work"
@@ -117,6 +120,17 @@ const ProductPage = () => {
             </p>
           </VerticalTimelineElement>
         </VerticalTimeline>
+      ) : productNotFound ? (
+        <div style={{}}>
+          <Message negative>
+            <MessageHeader>We're sorry!</MessageHeader>
+            <p>Product with serial number {serialNumber} was not found.</p>
+          </Message>
+        </div>
+      ) : (
+        <Dimmer active>
+          <Loader>Loading</Loader>
+        </Dimmer>
       )}
     </div>
   );
