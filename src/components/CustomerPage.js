@@ -26,8 +26,10 @@ const CustomerPage = () => {
     console.log(`loaded data`, scanData);
     if (scanData && scanData !== "") {
       console.log(`loaded >>>`, scanData);
-      setData(scanData);
-      setStartScan(false);
+      const decodedData = JSON.parse(scanData);
+      setSerialNumber(decodedData.serialNumber || "");
+      setQrValue(scanData);
+      setStartScan(!startScan);
       setLoadingScan(false);
     }
   };
@@ -115,6 +117,7 @@ const CustomerPage = () => {
                       setStartScan(!startScan);
                     }}
                     label={startScan ? "Turn off camera" : "Turn on camera"}
+                    checked={startScan}
                   />
                 </div>
                 {qrValue && (
@@ -131,7 +134,7 @@ const CustomerPage = () => {
                 )}
                 {startScan && (
                   <>
-                    <div style={{ position: "relative", width: "100%" }}>
+                    <div style={{ position: "relative", width: "100%", paddingLeft:'20%', paddingRight:'20%' }}>
                       <div style={{ position: "relative" }}>
                         <QrReader
                           constraints={{ facingMode: selected }}

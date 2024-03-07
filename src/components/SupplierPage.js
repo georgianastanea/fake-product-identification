@@ -95,6 +95,13 @@ const SupplierPage = () => {
     if (scanData && scanData !== "") {
       console.log(`loaded >>>`, scanData);
       setData(scanData);
+      const decodedData = JSON.parse(scanData);
+      setSerialNumber(decodedData.serialNumber || "");
+      setProductName(decodedData.productName || "");
+      setSourceAddress(decodedData.sourceAddress || "");
+      setDestinationAddress(decodedData.destinationAddress || "");
+      setRemarks(decodedData.remarks || "");
+      setQrValue(scanData);
       setStartScan(false);
       setLoadingScan(false);
     }
@@ -222,6 +229,7 @@ const SupplierPage = () => {
                         onChange={() => {
                           setStartScan(!startScan);
                         }}
+                        checked={startScan}
                         label={startScan ? "Turn off camera" : "Turn on camera"}
                       />
                     </div>
@@ -254,14 +262,14 @@ const SupplierPage = () => {
                     <div style={{ height: "5px" }} />
                     {startScan && (
                       <>
-                        <div style={{ position: "relative", width: "100%" }}>
-                          <div style={{ position: "relative" }}>
+                        <div style={{ position: "relative", width: "80%" }}>
+                          <div style={{ position: "relative"}}>
                             <QrReader
                               constraints={{ facingMode: selected }}
                               delay={1000}
                               onError={handleError}
                               onResult={handleScan}
-                              style={{ width: "100%", height: "auto" }}
+                              style={{ width: "80%", height: "auto" }}
                             />
                             <div className="qr-bounding-box"></div>
                           </div>
