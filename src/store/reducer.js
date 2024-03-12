@@ -1,3 +1,5 @@
+import { identity } from "lodash";
+
 export const provider = (state = {}, action) => {
   switch (action.type) {
     case "PROVIDER_LOADED":
@@ -58,8 +60,8 @@ export const product_tracker = (state = DEFAULT_PRODUCT_STATE, action) => {
     case "NEW_PRODUCT_SUCCESS":
       index = state.allProducts.data.findIndex(
         (order) =>
-          order.productId.toString() ===
-          action.productOrder.productId.toString()
+          order.serialNumber.toString() ===
+          action.productOrder.serialNumber.toString()
       );
       if (index === -1) {
         data = [...state.allProducts.data, action.productOrder];

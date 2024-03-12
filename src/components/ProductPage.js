@@ -33,7 +33,6 @@ const ProductPage = () => {
         );
         setProductHistory(history);
         if (history.initialProduct === undefined) setProductNotFound(true);
-        console.log("Product history:", history);
       } catch (error) {
         console.error("Error fetching product history:", error);
       }
@@ -41,6 +40,7 @@ const ProductPage = () => {
 
     fetchProductHistory();
   }, [serialNumber, provider, product_tracker]);
+
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp * 1000);
@@ -68,55 +68,55 @@ const ProductPage = () => {
             className="vertical-timeline-element--work"
             contentStyle={{ background: "rgb(33, 150, 243)", color: "black" }}
             contentArrowStyle={{ borderRight: "7px solid  rgb(33, 150, 243)" }}
-            date={formatDate(productHistory.initialProduct.args.timestamp)}
+            date={formatDate(productHistory.initialProduct.timestamp)}
             iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
             icon={<FactoryIcon />}
           >
             <h3 className="vertical-timeline-element-title">
-              {productHistory.initialProduct.args.name}
+              {productHistory.initialProduct.productName}
             </h3>
             <p>
               <label>Serial Number: </label>
-              {productHistory.initialProduct.args.serialNumber.toString()}
+              {productHistory.initialProduct.serialNumber.toString()}
               <br />
               <label>Source: </label>
-              {productHistory.initialProduct.args.source.toString()}
+              {productHistory.initialProduct.sourceAddress.toString()}
               <br />
               <label>Destination: </label>
-              {productHistory.initialProduct.args.destination.toString()}
+              {productHistory.initialProduct.destinationAddress.toString()}
               <br />
               <label>Remarks: </label>
-              {productHistory.initialProduct.args.remarks.toString()}
+              {productHistory.initialProduct.remarks.toString()}
               <br />
               <label>Manufacturer Address: </label>
-              {productHistory.initialProduct.args.manufacturer.toString()}
+              {productHistory.initialProduct.manufacturer.toString()}
             </p>
           </VerticalTimelineElement>
           <VerticalTimelineElement
             className="vertical-timeline-element--work"
             contentStyle={{ background: "#f5f5f5", color: "black" }}
-            date={formatDate(productHistory.updatedProducts[0].args.timestamp)}
+            date={formatDate(productHistory.updatedProducts[0].timestamp)}
             iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
             icon={<LocalShippingIcon />}
           >
             <h3 className="vertical-timeline-element-title">
-              {productHistory.updatedProducts[0].args.name}
+              {productHistory.updatedProducts[0].productName}
             </h3>
             <p>
               <label>Serial Number: </label>
-              {productHistory.updatedProducts[0].args.serialNumber.toString()}
+              {productHistory.updatedProducts[0].serialNumber.toString()}
               <br />
               <label>Source: </label>
-              {productHistory.updatedProducts[0].args.source.toString()}
+              {productHistory.updatedProducts[0].sourceAddress.toString()}
               <br />
               <label>Destination: </label>
-              {productHistory.updatedProducts[0].args.destination.toString()}
+              {productHistory.updatedProducts[0].destinationAddress.toString()}
               <br />
               <label>Remarks: </label>
-              {productHistory.updatedProducts[0].args.remarks.toString()}
+              {productHistory.updatedProducts[0].remarks.toString()}
               <br />
               <label>Supplier Address: </label>
-              {productHistory.updatedProducts[0].args.supplier.toString()}
+              {productHistory.updatedProducts[0].supplier.toString()}
             </p>
           </VerticalTimelineElement>
         </VerticalTimeline>
