@@ -21,6 +21,8 @@ const ProductPage = () => {
   );
   const [productHistory, setProductHistory] = useState({});
   const [productNotFound, setProductNotFound] = useState(false);
+  const [isComplexProduct, setIsComplexProduct] = useState(false);
+  const [containingProducts, setContainingProducts] = useState([]);
 
   useEffect(() => {
     const fetchProductHistory = async () => {
@@ -31,6 +33,13 @@ const ProductPage = () => {
           provider,
           product_tracker
         );
+        if (
+          history.initialProduct !== undefined &&
+          history.initialProduct.containingProducts !== undefined
+        ) {
+          setIsComplexProduct(true);
+          setContainingProducts(history.initialProduct.containingProducts);
+        }
         setProductHistory(history);
         if (history.initialProduct === undefined) setProductNotFound(true);
       } catch (error) {
@@ -40,7 +49,6 @@ const ProductPage = () => {
 
     fetchProductHistory();
   }, [serialNumber, provider, product_tracker]);
-
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp * 1000);
@@ -64,10 +72,63 @@ const ProductPage = () => {
     <div style={{ paddingTop: "40px" }}>
       {productHistory.initialProduct ? (
         <VerticalTimeline lineColor="#e7e7e7">
+          {isComplexProduct &&
+            containingProducts.length > 0 &&
+            containingProducts.map((containingProduct, index) => (
+              <VerticalTimelineElement
+                key={index}
+                className="vertical-timeline-element--work"
+                contentStyle={{
+                  background: index % 2 === 0 ? "rgb(33, 150, 243)" : "#f5f5f5",
+                  color: "black",
+                }}
+                contentArrowStyle={{
+                  borderRight:
+                    index % 2 === 0
+                      ? "7px solid  rgb(33, 150, 243)"
+                      : "7px solid #f5f5f5",
+                }}
+                date={formatDate(containingProduct.timestamp)}
+                iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
+                icon={<FactoryIcon />}
+                position={index % 2 === 0 ? "left" : "right"}
+              >
+                <h3 className="vertical-timeline-element-title">
+                  {containingProduct.productName}
+                </h3>
+                <p>
+                  <label>Serial Number: </label>
+                  {containingProduct.serialNumber.toString()}
+                  <br />
+                  <label>Source: </label>
+                  {containingProduct.sourceAddress.toString()}
+                  <br />
+                  <label>Destination: </label>
+                  {containingProduct.destinationAddress.toString()}
+                  <br />
+                  <label>Remarks: </label>
+                  {containingProduct.remarks.toString()}
+                  <br />
+                  <label>Manufacturer Address: </label>
+                  {containingProduct.manufacturer.toString()}
+                </p>
+              </VerticalTimelineElement>
+            ))}
           <VerticalTimelineElement
             className="vertical-timeline-element--work"
-            contentStyle={{ background: "rgb(33, 150, 243)", color: "black" }}
-            contentArrowStyle={{ borderRight: "7px solid  rgb(33, 150, 243)" }}
+            contentStyle={{
+              background:
+                containingProducts.length % 2 === 0
+                  ? "rgb(33, 150, 243)"
+                  : "#f5f5f5",
+              color: "black",
+            }}
+            contentArrowStyle={{
+              borderRight:
+                containingProducts.length % 2 === 0
+                  ? "7px solid  rgb(33, 150, 243)"
+                  : "7px solid #f5f5f5",
+            }}
             date={formatDate(productHistory.initialProduct.timestamp)}
             iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
             icon={<FactoryIcon />}
@@ -89,39 +150,64 @@ const ProductPage = () => {
               {productHistory.initialProduct.remarks.toString()}
               <br />
               <label>Manufacturer Address: </label>
-              {productHistory.initialProduct.manufacturer.toString()}
-            </p>
-          </VerticalTimelineElement>
-          <VerticalTimelineElement
-            className="vertical-timeline-element--work"
-            contentStyle={{ background: "#f5f5f5", color: "black" }}
-            date={formatDate(productHistory.updatedProducts[0].timestamp)}
-            iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
-            icon={<LocalShippingIcon />}
-          >
-            <h3 className="vertical-timeline-element-title">
-              {productHistory.updatedProducts[0].productName}
-            </h3>
-            <p>
-              <label>Serial Number: </label>
-              {productHistory.updatedProducts[0].serialNumber.toString()}
-              <br />
-              <label>Source: </label>
-              {productHistory.updatedProducts[0].sourceAddress.toString()}
-              <br />
-              <label>Destination: </label>
-              {productHistory.updatedProducts[0].destinationAddress.toString()}
-              <br />
-              <label>Remarks: </label>
-              {productHistory.updatedProducts[0].remarks.toString()}
+              {productHistory.initialProduct.manufacturer
+                ? productHistory.initialProduct.manufacturer.toString()
+                : "N/A"}
               <br />
               <label>Supplier Address: </label>
-              {productHistory.updatedProducts[0].supplier.toString()}
+              {productHistory.initialProduct.supplier
+                ? productHistory.initialProduct.supplier.toString()
+                : "N/A"}
             </p>
           </VerticalTimelineElement>
+
+          {productHistory.updatedProducts.length > 0 &&
+            productHistory.updatedProducts.map((updatedProduct, index) => (
+              <VerticalTimelineElement
+                key={index}
+                className="vertical-timeline-element--work"
+                contentStyle={{
+                  background:
+                    containingProducts.length % 2 === 1
+                      ? "rgb(33, 150, 243)"
+                      : "#f5f5f5",
+                  color: "black",
+                }}
+                contentArrowStyle={{
+                  borderRight:
+                    containingProducts.length % 2 === 1
+                      ? "7px solid  rgb(33, 150, 243)"
+                      : "7px solid #f5f5f5",
+                }}
+                date={formatDate(productHistory.updatedProducts[0].timestamp)}
+                iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
+                icon={<LocalShippingIcon />}
+                position={containingProducts.length % 2 === 1 ? "left" : "right"}
+              >
+                <h3 className="vertical-timeline-element-title">
+                  {productHistory.updatedProducts[0].productName}
+                </h3>
+                <p>
+                  <label>Serial Number: </label>
+                  {productHistory.updatedProducts[0].serialNumber.toString()}
+                  <br />
+                  <label>Source: </label>
+                  {productHistory.updatedProducts[0].sourceAddress.toString()}
+                  <br />
+                  <label>Destination: </label>
+                  {productHistory.updatedProducts[0].destinationAddress.toString()}
+                  <br />
+                  <label>Remarks: </label>
+                  {productHistory.updatedProducts[0].remarks.toString()}
+                  <br />
+                  <label>Supplier Address: </label>
+                  {productHistory.updatedProducts[0].supplier.toString()}
+                </p>
+              </VerticalTimelineElement>
+            ))}
         </VerticalTimeline>
       ) : productNotFound ? (
-        <div style={{}}>
+        <div>
           <Message negative>
             <MessageHeader>We're sorry!</MessageHeader>
             <p>Product with serial number {serialNumber} was not found.</p>

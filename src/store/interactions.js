@@ -156,6 +156,63 @@ export const updateProduct = async (
   }
 };
 
+export const submitComplexProduct = async (
+  serialNumber,
+  name,
+  sourceAddress,
+  destinationAddress,
+  remarks,
+  containingProducts,
+  provider,
+  product_tracker,
+  dispatch
+) => {
+  let transaction;
+  dispatch({ type: "NEW_PRODUCT_LOADED" });
+
+  try {
+    const signer = provider.getSigner();
+    const signerAddress = await signer.getAddress();
+    const block = await provider.getBlock("latest");
+
+    const containingProductsCids = await Promise.all(
+      containingProducts.map(async (product) => {
+        const cid = await product_tracker.getProduct(product.serialNumber);
+        return cid;
+      })
+    );
+
+    const containingProductsData = await Promise.all(
+      containingProductsCids.map(async (cid) => {
+        const data = await fetchJSONDataFromIPFS(cid);
+        return data;
+      })
+    );
+
+    const jsonProduct = {
+      serialNumber: serialNumber,
+      timestamp: block.timestamp,
+      productName: name,
+      sourceAddress: sourceAddress,
+      destinationAddress: destinationAddress,
+      remarks: remarks,
+      manufacturer: signerAddress,
+      supplier: signerAddress,
+      containingProducts: containingProductsData,
+    };
+
+    const cid = await pinJSONToIPFS(jsonProduct);
+
+    transaction = await product_tracker
+      .connect(signer)
+      .addProduct(serialNumber, cid);
+    await transaction.wait();
+  } catch (error) {
+    console.log("Error submitting product", error);
+    dispatch({ type: "NEW_PRODUCT_FAIL" });
+  }
+};
+
 export const loadAllProducts = async (provider, product_tracker, dispatch) => {
   const block = await provider.getBlockNumber();
   const addedProductsStream = await product_tracker.queryFilter(
@@ -202,6 +259,8 @@ export const loadProductHistoryBySerialNumber = async (
   const initialCid = addedProductsStream.find(
     (event) => event.args.serialNumber.toString() === serialNumber.toString()
   );
+  if (!initialCid) return { initialProduct: undefined, updatedProducts: [] };
+
   const initialProduct = await fetchJSONDataFromIPFS(initialCid.args.cid);
 
   const updatedProductsStream = await product_tracker.queryFilter(
