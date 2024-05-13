@@ -6,7 +6,13 @@ const apiKey = process.env.REACT_APP_IPFS_API_KEY;
 const apiSecretKey = process.env.REACT_APP_IPFS_API_SECRET;
 
 export const loadProvider = (dispatch) => {
-  const connection = new ethers.providers.Web3Provider(window.ethereum);
+  let connection;
+  if (typeof window.ethereum !== "undefined") {
+    connection = new ethers.providers.Web3Provider(window.ethereum);
+  } else {
+    const providerUrl = "https://sepolia.infura.io/v3/3419cf6d76c741f8831791c1a1a16ff3";
+    connection = new ethers.providers.JsonRpcProvider(providerUrl);
+  }
   dispatch({ type: "PROVIDER_LOADED", connection });
   return connection;
 };
@@ -205,7 +211,10 @@ export const submitComplexProduct = async (
 
     complexProductTransaction = await product_tracker
       .connect(signer)
-      .addComplexProduct(serialNumber, containingProducts.map((product) => product.serialNumber));
+      .addComplexProduct(
+        serialNumber,
+        containingProducts.map((product) => product.serialNumber)
+      );
     await complexProductTransaction.wait();
 
     transaction = await product_tracker

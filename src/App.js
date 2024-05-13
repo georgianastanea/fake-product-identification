@@ -27,13 +27,15 @@ function App() {
     const provider = loadProvider(dispatch);
     const chainId = await loadNetwork(provider, dispatch);
 
-    window.ethereum.on("accountsChanged", () => {
-      loadAccount(provider, dispatch);
-    });
-    window.ethereum.on("chainChanged", () => {
-      window.location.reload();
-    });
-
+    if(window.ethereum !== undefined) {
+      window.ethereum.on("accountsChanged", () => {
+        loadAccount(provider, dispatch);
+      });
+      window.ethereum.on("chainChanged", () => {
+        window.location.reload();
+      });
+    }
+    
     const product_tracker_config = config[chainId].ProductTracker;
     const product_tracker = loadProductTracker(
       provider,
