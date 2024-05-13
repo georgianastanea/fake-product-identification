@@ -167,7 +167,7 @@ export const submitComplexProduct = async (
   product_tracker,
   dispatch
 ) => {
-  let transaction;
+  let transaction, complexProductTransaction;
   dispatch({ type: "NEW_PRODUCT_LOADED" });
 
   try {
@@ -202,6 +202,11 @@ export const submitComplexProduct = async (
     };
 
     const cid = await pinJSONToIPFS(jsonProduct);
+
+    complexProductTransaction = await product_tracker
+      .connect(signer)
+      .addComplexProduct(serialNumber, containingProducts.map((product) => product.serialNumber));
+    await complexProductTransaction.wait();
 
     transaction = await product_tracker
       .connect(signer)
