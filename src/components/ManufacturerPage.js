@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import { submitProduct } from "../store/interactions";
 import { useSelector, useDispatch } from "react-redux";
 import { MessageHeader, Message } from "semantic-ui-react";
-import axios from 'axios';
 
 const ManufacturerPage = () => {
   const [qrValue, setQrValue] = useState();
@@ -22,8 +21,6 @@ const ManufacturerPage = () => {
   );
   const dispatch = useDispatch();
   const provider = useSelector((state) => state.provider.connection);
-  const apiKey = process.env.REACT_APP_API_KEY;
-  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     setSerialNumber("");

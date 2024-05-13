@@ -7,13 +7,13 @@
     },
     "11155111": {
         "ProductTracker": {
-            "address":"0xC5777553D4954a44b21c4AFFcaE78EB14B2d8F11"
+            "address":"0x572cBFdd3eDfBEA2666476D1F2fed196cf6CB5A1"
         },
         "explorerURL": "https://sepolia.etherscan.io/"
     },
     "5": {
         "ProductTracker": {
-            "address":"0x5FbDB2315678afecb367f032d93F642f64180aa3"
+            "address":"0xC5777553D4954a44b21c4AFFcaE78EB14B2d8F11"
         },
         "explorerURL": "https://goerli.etherscan.io/"
     }

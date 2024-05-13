@@ -8,17 +8,19 @@ import {
   Icon,
   Message,
   MessageHeader,
+  ListItem,
+  ListContent,
+  List,
 } from "semantic-ui-react";
 import QRCode from "qrcode.react";
 import { useState, useEffect } from "react";
-import { updateProduct } from "../store/interactions";
 import { useSelector, useDispatch } from "react-redux";
 import { QrReader } from "react-qr-reader";
 import jsQR from "jsqr";
 import "./scannerStyles.css";
-import { useNavigate } from "react-router-dom";
+import { submitComplexProduct } from "../store/interactions";
 
-const SupplierPage = () => {
+const BundlePage = () => {
   const [qrValue, setQrValue] = useState();
   const [serialNumber, setSerialNumber] = useState("");
   const [productName, setProductName] = useState("");
@@ -30,6 +32,8 @@ const SupplierPage = () => {
   const [startScan, setStartScan] = useState(false);
   const [loadingScan, setLoadingScan] = useState(false);
   const [data, setData] = useState("");
+  const [productsLoaded, setProductsLoaed] = useState(false);
+  const [productList, setProductList] = useState([]);
 
   const account = useSelector((state) => state.provider.account);
   const product_tracker = useSelector(
@@ -37,7 +41,6 @@ const SupplierPage = () => {
   );
   const dispatch = useDispatch();
   const provider = useSelector((state) => state.provider.connection);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setSerialNumber("");
@@ -47,14 +50,15 @@ const SupplierPage = () => {
     setRemarks("");
   }, [refreshKey]);
 
-  const handleUpdateProduct = (e) => {
+  const handleAddProduct = (e) => {
     e.preventDefault();
-    updateProduct(
+    submitComplexProduct(
       serialNumber,
       productName,
       sourceAddress,
       destinationAddress,
       remarks,
+      productList,
       provider,
       product_tracker,
       dispatch
@@ -98,14 +102,14 @@ const SupplierPage = () => {
       console.log(`loaded >>>`, scanData);
       setData(scanData);
       const decodedData = JSON.parse(scanData);
-      setSerialNumber(decodedData.serialNumber || "");
-      setProductName(decodedData.productName || "");
-      setSourceAddress(decodedData.sourceAddress || "");
-      setDestinationAddress(decodedData.destinationAddress || "");
-      setRemarks(decodedData.remarks || "");
-      setQrValue(scanData);
-      setStartScan(false);
-      setLoadingScan(false);
+      const product = {
+        serialNumber: decodedData.serialNumber,
+        productName: decodedData.productName,
+        sourceAddress: decodedData.sourceAddress,
+        destinationAddress: decodedData.destinationAddress,
+        remarks: decodedData.remarks,
+      };
+      setProductList((prevList) => [...prevList, product]);
     }
   };
 
@@ -131,11 +135,7 @@ const SupplierPage = () => {
         const code = jsQR(imageData.data, imageData.width, imageData.height);
         if (code) {
           const decodedData = JSON.parse(code.data);
-          setSerialNumber(decodedData.serialNumber || "");
-          setProductName(decodedData.productName || "");
-          setSourceAddress(decodedData.sourceAddress || "");
-          setDestinationAddress(decodedData.destinationAddress || "");
-          setRemarks(decodedData.remarks || "");
+          setProductList(prevList => [...prevList, decodedData]);
         } else {
           console.log("No QR code found in the image.");
         }
@@ -143,85 +143,105 @@ const SupplierPage = () => {
       img.src = imgDataUrl;
     };
     reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleRemoveProduct = (indexToRemove) => {
+    setProductList(currentProducts => currentProducts.filter((_, index) => index !== indexToRemove));
   };
 
   return (
     <div>
       {account ? (
         <div>
-          <h3 style={{ padding: "10px" }}>Supplier Page</h3>
+          <h3 style={{ padding: "10px" }}>Bundle Page</h3>
           <Grid columns={2} container divided stackable>
             <Grid.Row>
               <Grid.Column>
-                <Form>
-                  <FormField>
-                    <label>Serial Number</label>
-                    <input
-                      type="number"
-                      value={serialNumber}
-                      onChange={(e) => setSerialNumber(e.target.value)}
-                    />
-                  </FormField>
-                  <FormField>
-                    <label>Product Name</label>
-                    <input
-                      value={productName}
-                      onChange={(e) => setProductName(e.target.value)}
-                    />
-                  </FormField>
-                  <FormField>
-                    <label>Source Address</label>
-                    <input
-                      value={sourceAddress}
-                      onChange={(e) => setSourceAddress(e.target.value)}
-                    />
-                  </FormField>
-                  <FormField>
-                    <label>Destination Address</label>
-                    <input
-                      value={destinationAddress}
-                      onChange={(e) => setDestinationAddress(e.target.value)}
-                    />
-                  </FormField>
-                  <FormField>
-                    <label>Remarks about the product</label>
-                    <input
-                      value={remarks}
-                      onChange={(e) => setRemarks(e.target.value)}
-                    />
-                  </FormField>
-                  <Button
-                    color="blue"
-                    type="submit"
-                    onClick={handleUpdateProduct}
-                    style={{ margin: "auto", display: "block" }}
-                  >
-                    Update Product
-                  </Button>
-                </Form>
-                <a
-                  style={{
-                    margin: "auto",
-                    display: "block",
-                    textAlign: "center",
-                    paddingTop: "10px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => navigate("/bundle")}
-                >
-                  Want to create a bundle?
-                </a>
+                {productsLoaded ? (
+                  <Form>
+                    <FormField>
+                      <label>Serial Number</label>
+                      <input
+                        type="number"
+                        value={serialNumber}
+                        onChange={(e) => setSerialNumber(e.target.value)}
+                      />
+                    </FormField>
+                    <FormField>
+                      <label>Product Name</label>
+                      <input
+                        value={productName}
+                        onChange={(e) => setProductName(e.target.value)}
+                      />
+                    </FormField>
+                    <FormField>
+                      <label>Source Address</label>
+                      <input
+                        value={sourceAddress}
+                        onChange={(e) => setSourceAddress(e.target.value)}
+                      />
+                    </FormField>
+                    <FormField>
+                      <label>Destination Address</label>
+                      <input
+                        value={destinationAddress}
+                        onChange={(e) => setDestinationAddress(e.target.value)}
+                      />
+                    </FormField>
+                    <FormField>
+                      <label>Remarks about the product</label>
+                      <input
+                        value={remarks}
+                        onChange={(e) => setRemarks(e.target.value)}
+                      />
+                    </FormField>
+                    <Button
+                      color="blue"
+                      type="submit"
+                      onClick={handleAddProduct}
+                      style={{ margin: "auto", display: "block" }}
+                    >
+                      Add Product
+                    </Button>
+                  </Form>
+                ) : (
+                  <div>
+                    <List divided verticalAlign="middle">
+                      {productList.map((product, index) => (
+                        <ListItem key={index}>
+                          <ListContent floated="right">
+                            <Button onClick={() => handleRemoveProduct(index)}>Remove</Button>
+                          </ListContent>
+                          <Icon name="box" size="large" color="blue" />
+                          <ListContent>{product.productName}</ListContent>
+                        </ListItem>
+                      ))}
+                    </List>
+                    {productList.length > 0 && (
+                      <Button
+                        color="blue"
+                        style={{ margin: "auto", display: "block", marginTop:"30px" }}
+                        onClick={() => setProductsLoaed(true)}
+                      >
+                        Create a bundle
+                      </Button>
+                    )}
+                  </div>
+                )}
               </Grid.Column>
               <Grid.Column>
                 <Grid columns={1} container>
                   <Grid.Column>
-                    <Button
-                      color="blue"
-                      style={{ margin: "auto", display: "block" }}
-                      onClick={handleGenerateQR}
-                    >
-                      Generate QR Code
-                    </Button>
+                    {productsLoaded && (
+                      <Button
+                        color="blue"
+                        style={{ margin: "auto", display: "block" }}
+                        onClick={handleGenerateQR}
+                      >
+                        Generate QR Code
+                      </Button>
+                    )}
                     <div style={{ height: "7px" }} />
                     <div className="file-input-container">
                       <label htmlFor="file-input" className="file-input-label">
@@ -233,6 +253,7 @@ const SupplierPage = () => {
                         accept="image/*"
                         className="file-input"
                         onChange={handleUploadQr}
+                        style={{ cursor: "pointer" }}
                       />
                     </div>
 
@@ -318,4 +339,4 @@ const SupplierPage = () => {
   );
 };
 
-export default SupplierPage;
+export default BundlePage;

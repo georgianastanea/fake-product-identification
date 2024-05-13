@@ -18,6 +18,7 @@ import SupplierPage from "./components/SupplierPage";
 import CustomerPage from "./components/CustomerPage";
 import Alert from "./components/Alert";
 import ProductPage from "./components/ProductPage";
+import BundlePage from "./components/BundlePage";
 
 function App() {
   const dispatch = useDispatch();
@@ -56,6 +57,7 @@ function App() {
           <Route path="/supplier" element={<SupplierPage />} />
           <Route path="/customer" element={<CustomerPage />} />
           <Route path="/product/:serialNumber" element={<ProductPage />} />
+          <Route path="/bundle" element={<BundlePage />} />
         </Routes>
       </Layout>
       <Alert />
