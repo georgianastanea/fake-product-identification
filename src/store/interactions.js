@@ -6,11 +6,11 @@ const apiKey = process.env.REACT_APP_IPFS_API_KEY;
 const apiSecretKey = process.env.REACT_APP_IPFS_API_SECRET;
 
 export const loadProvider = (dispatch) => {
+  const providerUrl = process.env.REACT_APP_INFURA_PROVIDER_URL;
   let connection;
   if (typeof window.ethereum !== "undefined") {
     connection = new ethers.providers.Web3Provider(window.ethereum);
   } else {
-    const providerUrl = "https://sepolia.infura.io/v3/3419cf6d76c741f8831791c1a1a16ff3";
     connection = new ethers.providers.JsonRpcProvider(providerUrl);
   }
   dispatch({ type: "PROVIDER_LOADED", connection });
@@ -36,7 +36,7 @@ export const loadAccount = async (provider, dispatch) => {
 };
 
 const pinJSONToIPFS = async (jsonData) => {
-  const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+  const url = process.env.REACT_APP_PINATA_URL;
 
   try {
     const response = await axios.post(url, jsonData, {
