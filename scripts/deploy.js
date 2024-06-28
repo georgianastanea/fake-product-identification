@@ -8,10 +8,8 @@ async function main() {
     // Deploy the contract
     const productTracker = await ProductTracker.connect(accounts[0]).deploy();
     await productTracker.deployed();
-    //.waitForDeployment()
 
     console.log(`ProductTracker is deployed at address: ${productTracker.address}`);
-    //.target if it doesn t work
 }
 
 main()

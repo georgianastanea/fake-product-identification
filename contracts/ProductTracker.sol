@@ -47,7 +47,10 @@ contract ProductTracker {
             require(productExists(_containingProducts[i]), "Component product not found");
         }
         complexProducts[_serialNumber] = _containingProducts;
-        emit ProductTracker__AddComplexProduct(_serialNumber, _containingProducts, block.timestamp);
+        emit ProductTracker__AddComplexProduct(
+            _serialNumber, 
+            _containingProducts, 
+            block.timestamp);
     }
 
     function updateComplexProduct(uint _serialNumber, uint[] memory _containingProducts) public {
@@ -56,7 +59,10 @@ contract ProductTracker {
             require(productExists(_containingProducts[i]), "Component product not found");
         }
         complexProducts[_serialNumber] = _containingProducts;
-        emit ProductTracker__UpdateComplexProduct(_serialNumber, _containingProducts, block.timestamp);
+        emit ProductTracker__UpdateComplexProduct(
+            _serialNumber, 
+            _containingProducts, 
+            block.timestamp);
     }
 
     function getProduct(uint _serialNumber) public view returns (string memory) {
