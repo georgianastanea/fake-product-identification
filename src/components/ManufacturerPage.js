@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Form, FormField, Button } from "semantic-ui-react";
+import { Grid, Form, FormField, Button, Input } from "semantic-ui-react";
 import QRCode from "qrcode.react";
 import { useState, useEffect, useRef } from "react";
 import { submitProduct } from "../store/interactions";
@@ -21,6 +21,26 @@ const ManufacturerPage = () => {
   );
   const dispatch = useDispatch();
   const provider = useSelector((state) => state.provider.connection);
+
+  const [validationMessage, setValidationMessage] = useState("");
+
+  const handleSerialNumberChange = (e) => {
+    const value = e.target.value;
+
+    // Validate the input length
+    if (value.length <= 10) {
+      setSerialNumber(value);
+
+      // Check if the value is exactly 10 digits
+      if (value.length === 10) {
+        setValidationMessage("");
+      } else {
+        setValidationMessage("Serial number must be exactly 10 digits.");
+      }
+    } else {
+      setValidationMessage("Serial number cannot exceed 10 digits.");
+    }
+  };
 
   useEffect(() => {
     setSerialNumber("");
@@ -85,11 +105,21 @@ const ManufacturerPage = () => {
                 <Form>
                   <FormField>
                     <label>Serial Number</label>
-                    <input
+                    <Input
                       type="number"
                       value={serialNumber}
-                      onChange={(e) => setSerialNumber(e.target.value)}
+                      onChange={handleSerialNumberChange}
+                      placeholder="Enter 10-digit serial number"
                     />
+                    {validationMessage && (
+                      <Message
+                        negative
+                        size="small"
+                        style={{ marginTop: "0.5em" }}
+                      >
+                        <p>{validationMessage}</p>
+                      </Message>
+                    )}
                   </FormField>
                   <FormField>
                     <label>Product Name</label>
@@ -172,7 +202,7 @@ const ManufacturerPage = () => {
           </Grid>
         </div>
       ) : (
-        <Message info style={{ marginTop:'50px'}}>
+        <Message info style={{ marginTop: "50px" }}>
           <MessageHeader>Are you a manufacturer?</MessageHeader>
           <p>Please connect to your wallet first.</p>
         </Message>

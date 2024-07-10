@@ -200,6 +200,9 @@ const ProductPage = () => {
                   <label>Remarks: </label>
                   {productHistory.updatedProducts[0].remarks.toString()}
                   <br />
+                  <label>Manufacturer Address: </label>
+                  {productHistory.updatedProducts[0].manufacturer.toString()}
+                  <br />
                   <label>Supplier Address: </label>
                   {productHistory.updatedProducts[0].supplier.toString()}
                 </p>

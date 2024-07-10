@@ -21,6 +21,10 @@ const Alert = () => {
   const isError = useSelector(
     (state) => state.product_tracker.transaction.isError
   );
+  const isSuccessful = useSelector(
+    (state) => state.product_tracker.transaction.isSuccessful
+  );
+
   const chainId = useSelector((state) => state.provider.chainId);
   const dispatch = useDispatch();
 
@@ -54,7 +58,7 @@ const Alert = () => {
               <Icon name="close" onClick={handleDismiss} />
               <MessageHeader>Transaction Failed</MessageHeader>
             </Message>
-          ) : !isPending && event[0] ? (
+          ) : isSuccessful && event[0] ? (
             <Message positive floating onClick={handleDismiss} className="message">
               <Icon name="close" onClick={handleDismiss} />
               <MessageHeader>Your transaction was successful!</MessageHeader>
