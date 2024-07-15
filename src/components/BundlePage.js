@@ -63,6 +63,7 @@ const BundlePage = () => {
       product_tracker,
       dispatch
     );
+    sessionStorage.setItem("sender", account);
     handleGenerateQR();
     setRefreshKey((prevKey) => prevKey + 1);
   };
