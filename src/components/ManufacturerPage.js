@@ -63,6 +63,7 @@ const ManufacturerPage = () => {
       dispatch
     );
     handleGenerateQR();
+    sessionStorage.setItem("sender", account);
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
