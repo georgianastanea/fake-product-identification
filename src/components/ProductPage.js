@@ -68,6 +68,8 @@ const ProductPage = () => {
     return `${formattedDay}/${formattedMonth}/${year} ${formattedHour}:${formattedMinute}:${formattedSecond}`;
   };
 
+  const icon = isComplexProduct ? <LocalShippingIcon /> : <FactoryIcon />;
+
   return (
     <div style={{ paddingTop: "40px" }}>
       {productHistory.initialProduct ? (
@@ -131,7 +133,7 @@ const ProductPage = () => {
             }}
             date={formatDate(productHistory.initialProduct.timestamp)}
             iconStyle={{ background: "rgb(33, 150, 243)", color: "#fff" }}
-            icon={<FactoryIcon />}
+            icon = {icon}
           >
             <h3 className="vertical-timeline-element-title">
               {productHistory.initialProduct.productName}

@@ -52,7 +52,7 @@ const Alert = () => {
               <Icon name="close" onClick={handleDismiss} />
               <MessageHeader>Transaction Failed</MessageHeader>
             </Message>
-          ) : isSuccessful && event[0] && sessionStorage.getItem("sender") == account ? (
+          ) : isSuccessful && event[0] && sessionStorage.getItem("sender") === account ? (
             <Message positive floating onClick={handleDismiss} className="message">
               <Icon name="close" onClick={handleDismiss} />
               <MessageHeader>Your transaction was successful!</MessageHeader>
